@@ -22,7 +22,6 @@ void handleCmd(char *input)
         clean_args[j++] = arg_str[i];
     clean_args[j] = '\0';
 
-    // Tokenize by comma
     char *token = strtok(clean_args, ",");
     while (token != NULL && argc < 8)
     {
@@ -43,7 +42,7 @@ void handleCmd(char *input)
     Serial.println(args[j]);
   }*/
 
-  // Run matching command
+  // run command
   for (int i = 0; i < command_num; i++)
   {
     if (strcasecmp(name, commands[i].name) == 0)
