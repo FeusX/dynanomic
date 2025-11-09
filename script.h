@@ -17,53 +17,53 @@ void scriptCmd(char **args, int argc)
   char input[64];
   int8_t index = 0;
 
-  while (true)
+  while(true)
   {
-    char ch = Serial.read();
-
-    if (ch == '\r') continue;  // ignore carriage return
-
-    if (ch == '\n')  // end of line
+    if(Serial.available() > 0)
     {
-      input[index] = '\0';  // null terminate
-      index = 0;
+      char ch = Serial.read();
 
-      if (strlen(input) == 0) continue;
+      if(ch == '\r') continue;
 
-        // check for exit
-      if (strcmp(input, "exit()") == 0)
+      if(ch == '\n')
       {
-        Serial.println("[EXITING]");
-        return;
-      }
+        input[index] = '\0';
+        index = 0;
 
-      if (script_count < MAX_SCRIPT_LINES)
-      {
-        strncpy(script[script_count], input, MAX_LINE_LENGTH);
-        script[script_count][MAX_LINE_LENGTH-1] = '\0';
-        script_count++;
-        Serial.println("[SAVED]");
+        if(strlen(input) == 0) continue;
+
+        if(strcmp(input, "exit()") == 0)
+        {
+          Serial.println("[EXITING]");
+          return;
+        }
+
+        if(script_count < MAX_SCRIPT_LINES)
+        {
+          strncpy(script[script_count], input, MAX_LINE_LENGTH);
+          script[script_count][MAX_LINE_LENGTH - 1] = '\0';
+          script_count++;
+          Serial.println("[SAVED]");
+        }
+        else
+        {
+          Serial.println("BUFFER FULL");
+          return;
+        }
       }
       else
       {
-        Serial.println("BUFFER FULL");
-        return;
+        if(index < sizeof(input) - 1)
+          input[index++] = ch;
       }
-    }
-    else
-    {
-      if (index < sizeof(input) - 1)
-         input[index++] = ch;
     }
   }
 }
 
 
-
-
 void runScriptCmd(char **args, int argc)
 {
-  if (script_count == 0)
+  if(script_count == 0)
   {
     Serial.println("[SCRIPT] No stored commands!");
     return;
@@ -71,7 +71,7 @@ void runScriptCmd(char **args, int argc)
 
   Serial.println("[SCRIPT] Running...");
 
-  for (int8_t i = 0; i < script_count; i++)
+  for(int8_t i = 0; i < script_count; i++)
   {
     handleCmd(script[i]);
     delay(50);
