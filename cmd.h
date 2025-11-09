@@ -15,17 +15,18 @@ typedef struct {
 } Command;
 
 void writeLed(char **args, int argc);
-//void help(char **args, int argc);
+void help(char **args, int argc);
 //void getInput(char **args, int argc);
-//void scriptCmd(char **args, int argc);
 void echoCmd(char **args, int argc);
 void sleepCmd(char **args, int argc);
+//void sendAnalog(char **args, int argc);
 
 const Command commands[] = {
   {"writeLed", writeLed },
   {"echoCmd", echoCmd},
-  /*{ "HELP", help},
-  { "INPUT", getInput},*/
+  { "HELP", help},
+  //{ "INPUT", getInput},
+  //{ "sendAnalog", sendAnalog},
   {"SCRIPT", scriptCmd},
   {"sleepCmd", sleepCmd},
   {"RUN", runScriptCmd}
@@ -72,6 +73,14 @@ void sleepCmd(char **args, int argc)
   { Serial.println("nope"); return; }
 
   delay(atoi(args[0]));
+}
+
+void help(char **args, int argc)
+{
+  for(int8_t i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
+  {
+    Serial.println(commands[i].name);
+  }
 }
 
 #endif

@@ -3,27 +3,27 @@
 void handleCmd(char *input)
 {
   int len = strlen(input);
-  while (len > 0 && (input[len - 1] == '\r' || input[len - 1] == '\n'))
+  while(len > 0 && (input[len - 1] == '\r' || input[len - 1] == '\n'))
     input[--len] = '\0';
 
-  while (*input == ' ') input++;
+  while(*input == ' ') input++;
 
   char *name = strtok(input, "(");
   char *arg_str = strtok(NULL, ")");
   char *args[8];
   int argc = 0;
 
-  if (arg_str != NULL)
+  if(arg_str != NULL)
   {
     char clean_args[64];
     int j = 0;
-    for (int i = 0; arg_str[i] != '\0'; i++)
-      if (arg_str[i] != ' ' && arg_str[i] != '\r' && arg_str[i] != '\n')
+    for(int i = 0; arg_str[i] != '\0'; i++)
+      if(arg_str[i] != ' ' && arg_str[i] != '\r' && arg_str[i] != '\n')
         clean_args[j++] = arg_str[i];
     clean_args[j] = '\0';
 
     char *token = strtok(clean_args, ",");
-    while (token != NULL && argc < 8)
+    while(token != NULL && argc < 8)
     {
       args[argc++] = token;
       token = strtok(NULL, ",");
@@ -35,17 +35,16 @@ void handleCmd(char *input)
   Serial.println(name);
   Serial.print("Arg count: ");
   Serial.println(argc);
-  for (int j = 0; j < argc; j++) {
+  for(int j = 0; j < argc; j++) {
     Serial.print("Arg[");
     Serial.print(j);
     Serial.print("]: ");
     Serial.println(args[j]);
   }*/
 
-  // run command
-  for (int i = 0; i < command_num; i++)
+  for(int i = 0; i < command_num; i++)
   {
-    if (strcasecmp(name, commands[i].name) == 0)
+    if(strcasecmp(name, commands[i].name) == 0)
     {
       commands[i].func(args, argc);
       return;
