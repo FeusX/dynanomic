@@ -2,6 +2,7 @@
 #define CMD_H
 
 #include "script.h"
+#include "ntop.h"
 
 #include <Arduino.h>
 #include <stdlib.h>
@@ -29,7 +30,8 @@ const Command commands[] = {
   //{ "sendAnalog", sendAnalog},
   {"SCRIPT", scriptCmd},
   {"sleepCmd", sleepCmd},
-  {"RUN", runScriptCmd}
+  {"RUN", runScriptCmd},
+  {"ntop", ntop}
 };
 
 const int command_num = sizeof(commands) / sizeof(commands[0]);
