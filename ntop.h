@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+static volatile unsigned long busy = 0; 
+
 static int free_ram()
 {
   extern int16_t __heap_start, *__brkval;
@@ -13,32 +15,18 @@ static int free_ram()
 
 static void ntop(char **args, int argc)
 {
-  const unsigned long test = 1000000UL;
-  unsigned long start = micros();
-  unsigned long busy_time = 0;
-  unsigned long end = micros();
-
-  while(micros() - start < test)
-  {
-    unsigned long before = micros();
-    delayMicroseconds(50);
-    unsigned long after = micros();
-    busy_time += (after - before);
-    delayMicroseconds(100);
-  }
-
-  unsigned long total = micros() - start;
+  unsigned long total = millis() * 1000;
 
   Serial.println("[NTOP]");
-  Serial.print("CPU: ");
-  Serial.print(100.0 * busy_time / total);
+  Serial.print(F("CPU: "));
+  Serial.print(100.0 * busy / total, 2);
   Serial.println("%");
 
-  Serial.print("RAM: ");
+  Serial.print(F("RAM: "));
   Serial.print(2048 - free_ram());
-  Serial.println(" bytes");
+  Serial.println(F(" bytes"));
 
-  Serial.println("[NTOP]");
+  Serial.println(F("[NTOP]"));
 }
 
 #endif

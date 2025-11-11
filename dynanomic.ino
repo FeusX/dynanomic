@@ -28,7 +28,7 @@ void handleCmd(char *input)
       args[argc++] = token;
       token = strtok(NULL, ",");
     }
-  }
+  }  
 
   // debugger
   /*Serial.print("Parsed command name: ");
@@ -46,7 +46,9 @@ void handleCmd(char *input)
   {
     if(strcasecmp(name, commands[i].name) == 0)
     {
+      unsigned long t0 = micros();
       commands[i].func(args, argc);
+      busy += (micros() - t0);
       return;
     }
   }

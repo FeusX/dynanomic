@@ -15,19 +15,17 @@ typedef struct {
   CmdFunc func;
 } Command;
 
-void writeLed(char **args, int argc);
+void writePin(char **args, int argc);
 void help(char **args, int argc);
-//void getInput(char **args, int argc);
+void readPin(char **args, int argc);
 void echoCmd(char **args, int argc);
 void sleepCmd(char **args, int argc);
-//void sendAnalog(char **args, int argc);
 
 const Command commands[] = {
-  {"writeLed", writeLed },
+  {"writePin", writePin },
   {"echoCmd", echoCmd},
-  { "HELP", help},
-  //{ "INPUT", getInput},
-  //{ "sendAnalog", sendAnalog},
+  {"HELP", help},
+  {"readPin", readPin},
   {"SCRIPT", scriptCmd},
   {"sleepCmd", sleepCmd},
   {"RUN", runScriptCmd},
@@ -36,12 +34,12 @@ const Command commands[] = {
 
 const int command_num = sizeof(commands) / sizeof(commands[0]);
 
-void writeLed(char **args, int argc)
+void writePin(char **args, int argc)
 {
   delay(10);
   if(argc < 2)
   {
-    Serial.println("[ERROR] Usage: writeLed(pin, value)"); 
+    Serial.println("[ERROR] Usage: writePin(pin, value)"); 
     return;
   }
 
@@ -59,7 +57,7 @@ void writeLed(char **args, int argc)
   if(val > 1) analogWrite(pin, val);
   else digitalWrite(pin, val ? HIGH : LOW);
 
-  Serial.println("ledwritten");
+  Serial.println("pinwritten");
 }
 
 void echoCmd(char **args, int argc)
@@ -72,9 +70,19 @@ void echoCmd(char **args, int argc)
 void sleepCmd(char **args, int argc)
 {
   if(argc < 1)
-  { Serial.println("nope"); return; }
+  { Serial.println("[ERROR] Usage: sleepCmd(var)"); return; }
 
-  delay(atoi(args[0]));
+  static bool active = false;
+  static unsigned long end = 0;
+
+  unsigned long now = millis();
+  unsigned long dur = atoi(args[0]);
+
+  if(!active)
+  { end = now + dur; active = true; return; }
+
+  if(now >= end)
+  { active = false; return; }
 }
 
 void help(char **args, int argc)
@@ -82,6 +90,27 @@ void help(char **args, int argc)
   for(int8_t i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
   {
     Serial.println(commands[i].name);
+  }
+}
+
+void readPin(char **args, int argc)
+{
+  if(argc < 1)
+  { Serial.println("[ERROR] Usage: readPin(pin)"); return; }
+
+  int8_t pin = atoi(args[0]);
+
+  pinMode(pin, INPUT);
+
+  if(pin >= A0 && pin < A7)
+  {
+    Serial.print("analog: ");
+    Serial.println(analogRead(pin));
+  }
+  else
+  {
+    Serial.print("digital: ");
+    Serial.println(digitalRead(pin));
   }
 }
 
