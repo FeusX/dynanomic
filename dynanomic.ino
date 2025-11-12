@@ -84,5 +84,3 @@ void loop()
     else if(index < sizeof(input_buffer) - 1) {input_buffer[index++] = ch;}
   }
 }
-
-// test
