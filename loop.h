@@ -1,7 +1,7 @@
 #ifndef LOOP_H
 #define LOOP_H
 
-#define MAX_LOOP_CMD 12
+#define MAX_LOOP_CMD 16
 #define MAX_LOOP_LINE 20
 
 #include <Arduino.h>
