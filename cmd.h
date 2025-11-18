@@ -1,6 +1,6 @@
 #ifndef CMD_H
 #define CMD_H
-
+//test
 #include "ntop.h"
 #include "loop.h"
 
