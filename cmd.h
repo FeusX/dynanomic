@@ -3,6 +3,7 @@
 
 #include "ntop.h"
 #include "loop.h"
+#include "protocol.h"
 
 #include <Arduino.h>
 #include <stdlib.h>
@@ -33,7 +34,10 @@ const Command commands[] = {
   {"btd", btd},
   {"dtb", dtb},
   {"loopCmd", loopCmd},
-  {"LOOP", runLoop}
+  {"LOOP", runLoop},
+  {"readI2C", readI2C},
+  {"writeI2C", writeI2C},
+  {"scanI2C", scanI2C}
 };
 
 const int command_num = sizeof(commands) / sizeof(commands[0]);
