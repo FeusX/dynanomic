@@ -61,6 +61,7 @@ void handleCmd(char *input)
 void setup()
 {
   Serial.begin(57600);
+  Wire.begin();
   Serial.println("ready");
   delay(200);
 }

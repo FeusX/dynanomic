@@ -48,7 +48,7 @@ void writeI2C(char **args, int argc)
 void scanI2C(char **args, int argc)
 {
   Serial.println("Scanning...");
-  for(int8_t addr = 1; addr < 127; addr++)
+  for(uint8_t addr = 1; addr < 127; addr++)
   {
     Wire.beginTransmission(addr);
     if(Wire.endTransmission() == 0)
