@@ -7,6 +7,8 @@
 void readI2C(char **args, int argc);
 void writeI2C(char **args, int argc);
 void scanI2C(char **args, int argc);
+void initI2C(char **args, int argc);
+void clearI2C(char **args, int argc);
 
 void readI2C(char **args, int argc)
 {
@@ -29,16 +31,21 @@ void readI2C(char **args, int argc)
 
 void writeI2C(char **args, int argc)
 {
-  if(argc != 3)
-  { Serial.println("[ERROR] Usage: writeI2C(addr, reg, val)"); return; }
+  if(argc < 2)
+  { Serial.println("[ERROR] Usage: writeI2C(addr, byte1, byte2, ...)"); return; }
 
   int8_t addr = (int8_t)strtol(args[0], NULL, 16);
-  int8_t reg = (int8_t)strtol(args[1], NULL, 16);
-  int8_t val = (int8_t)strtol(args[2], NULL, 16);
 
   Wire.beginTransmission(addr);
-  Wire.write(reg);
-  Wire.write(val);
+
+  for(int16_t i = 1; i < argc; i++)
+  {
+    int8_t val = (int8_t)strtol(args[i], NULL, 16);
+    Wire.write(val);
+
+    if(val == 0x8D)
+    { delay(10); }
+  }
 
   if(Wire.endTransmission() != 0)
   { Serial.println("[ERROR] Failed to write."); }
@@ -59,6 +66,63 @@ void scanI2C(char **args, int argc)
   }
 
   Serial.println("Scan complete.");
+}
+
+void initI2C(char **args, int argc)
+{
+  Wire.beginTransmission(0x3C);
+  Wire.write(0x00);
+
+  uint8_t init_seq[] = {
+    0xAE,       // display off
+    0xD5, 0x80, // set clock div
+    0xA8, 0x3F, // multiplex ratio (128x64)
+    0xD3, 0x00, // display offset
+    0x40,       // start line
+    0x8D, 0x14, // charge pump
+    0x20, 0x00, // memory mode (horizontal)
+    0xA1,       // segment remap
+    0xC8,       // com scan direction
+    0xDA, 0x12, // com hardware config
+    0x81, 0xCF, // contrast control
+    0xD9, 0xF1, // pre-charge period
+    0xDB, 0x40, // vcomh deselect level
+    0xA4,       // output follows ram content
+    0xA6,       // normal display (not inverted)
+    0xAF        // display on
+  };
+  Wire.write(init_seq, sizeof(init_seq));
+
+  if(Wire.endTransmission() == 0) Serial.println("Done");
+  else Serial.println("Failed");
+}
+
+void clearI2C(char **args, int argc)
+{
+  for(uint8_t i = 0; i < 8; i++)
+  {
+    Wire.beginTransmission(0x3C);
+    Wire.write(0x00);
+    Wire.write(0xB0 | i);
+    Wire.write(0x00);
+    Wire.write(0x10);
+    Wire.endTransmission();
+
+    for(uint8_t j = 0; j < 128; j += 16)
+    {
+      Wire.beginTransmission(0x3C);
+      Wire.write(0x40);
+
+      for(uint8_t k = 0; k < 16; k++)
+      {
+        Wire.write(0x00);
+      }
+
+      Wire.endTransmission();
+    }
+  }
+
+  Serial.println("Screen cleared.");
 }
 
 #endif

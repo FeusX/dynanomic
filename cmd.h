@@ -37,7 +37,9 @@ const Command commands[] = {
   {"LOOP", runLoop},
   {"readI2C", readI2C},
   {"writeI2C", writeI2C},
-  {"scanI2C", scanI2C}
+  {"scanI2C", scanI2C},
+  {"initI2C", initI2C},
+  {"clearI2C", clearI2C}
 };
 
 const int command_num = sizeof(commands) / sizeof(commands[0]);
